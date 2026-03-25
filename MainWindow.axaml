@@ -1,0 +1,453 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:AvaloniaExample.ViewModels"
+        mc:Ignorable="d"
+        x:Class="AvaloniaExample.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Luna Tasks"
+        Width="1280"
+        Height="820"
+        MinWidth="1080"
+        MinHeight="720"
+        Background="#EEF1F7"
+        TransparencyLevelHint="AcrylicBlur">
+    <Window.Styles>
+        <Style Selector="TextBlock.hero">
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#1F2937" />
+        </Style>
+        <Style Selector="TextBlock.subtle">
+            <Setter Property="Foreground" Value="#6B7280" />
+        </Style>
+        <Style Selector="Border.panel">
+            <Setter Property="Background" Value="#FCFDFF" />
+            <Setter Property="CornerRadius" Value="24" />
+            <Setter Property="BoxShadow" Value="0 18 40 0 #140F172A" />
+            <Setter Property="BorderBrush" Value="#E7EBF4" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="Button.filter-button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#1F2937" />
+            <Setter Property="Padding" Value="16,14" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="CornerRadius" Value="18" />
+        </Style>
+        <Style Selector="Button.filter-button:pointerover">
+            <Setter Property="Background" Value="#F2F5FB" />
+        </Style>
+        <Style Selector="Button.filter-button:selected">
+            <Setter Property="Background" Value="#EAF1FF" />
+        </Style>
+        <Style Selector="Border.task-card">
+            <Setter Property="Background" Value="#FFFFFF" />
+            <Setter Property="CornerRadius" Value="22" />
+            <Setter Property="Padding" Value="18" />
+            <Setter Property="BorderBrush" Value="#E6EAF3" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="Border.task-card:pointerover">
+            <Setter Property="Background" Value="#FBFCFF" />
+        </Style>
+        <Style Selector="Border.task-card:important">
+            <Setter Property="BorderBrush" Value="#7C95FF" />
+        </Style>
+    </Window.Styles>
+
+    <Border Margin="18"
+            Padding="18"
+            CornerRadius="32"
+            Background="#F8FAFE"
+            BoxShadow="0 24 60 0 #1A94A3B8">
+        <Grid ColumnDefinitions="250,*,300" ColumnSpacing="18">
+            <Border Classes="panel" Padding="18">
+                <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="18">
+                    <StackPanel Spacing="14">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Ellipse Width="12" Height="12" Fill="#FF605C" />
+                            <Ellipse Width="12" Height="12" Fill="#FFBD44" />
+                            <Ellipse Width="12" Height="12" Fill="#00CA4E" />
+                        </StackPanel>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Luna Tasks"
+                                       FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="#111827" />
+                            <TextBlock Text="macOS 風の、静かで見やすい TODO ワークスペース"
+                                       TextWrapping="Wrap"
+                                       Classes="subtle" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Border Background="#F3F6FC" CornerRadius="18" Padding="14">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="今日の日付" Foreground="#7A8497" />
+                            <TextBlock Text="{Binding TodayLabel}"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Foreground="#111827" />
+                        </StackPanel>
+                    </Border>
+
+                    <ItemsControl ItemsSource="{Binding Filters}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:FilterOptionViewModel">
+                                <Button Classes="filter-button"
+                                        Classes.selected="{Binding IsSelected}"
+                                        Click="FilterButton_OnClick">
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold" />
+                                        <Border Grid.Column="1"
+                                                Width="34"
+                                                Height="34"
+                                                CornerRadius="17"
+                                                Background="#FFFFFF"
+                                                BorderBrush="#E8EDF6"
+                                                BorderThickness="1"
+                                                HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding Count}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="SemiBold" />
+                                        </Border>
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.ColumnSpan="2"
+                                                   Margin="0,4,0,0"
+                                                   Text="{Binding Subtitle}"
+                                                   Classes="subtle" />
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Border Background="#F5F7FD" CornerRadius="22" Padding="16">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="完了率"
+                                       Foreground="#7A8497" />
+                            <TextBlock Text="{Binding CompletionRateLabel}"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       Foreground="#111827" />
+                            <ProgressBar Value="{Binding CompletionRate}"
+                                         Maximum="100"
+                                         Height="8"
+                                         CornerRadius="4" />
+                            <TextBlock Text="{Binding CompletedTasks, StringFormat='{}{0} 件完了'}"
+                                       Classes="subtle" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="18">
+                <Border Classes="panel" Padding="22">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="18">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="{Binding HeaderTitle}" Classes="hero" />
+                            <TextBlock Text="{Binding HeaderSubtitle}"
+                                       TextWrapping="Wrap"
+                                       Classes="subtle" />
+                        </StackPanel>
+
+                        <Border Background="#F3F6FC" CornerRadius="18" Padding="14,10">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="表示中" Foreground="#7A8497" />
+                                <TextBlock Text="{Binding VisibleTaskCountLabel}"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="14">
+                    <Border Classes="panel" Padding="18">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="進行中" Foreground="#7A8497" />
+                            <TextBlock Text="{Binding OpenTasks}"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Foreground="#111827" />
+                            <TextBlock Text="まだ手を動かしているタスク数です。"
+                                       TextWrapping="Wrap"
+                                       Classes="subtle" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Classes="panel" Padding="18">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="固定" Foreground="#7A8497" />
+                            <TextBlock Text="{Binding ImportantTasks}"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Foreground="#111827" />
+                            <TextBlock Text="優先して目に入れたいタスクです。"
+                                       TextWrapping="Wrap"
+                                       Classes="subtle" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Classes="panel" Padding="18">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="今日" Foreground="#7A8497" />
+                            <TextBlock Text="{Binding TodayTasks}"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Foreground="#111827" />
+                            <TextBlock Text="今日の流れで進めたいタスクです。"
+                                       TextWrapping="Wrap"
+                                       Classes="subtle" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Grid Grid.Row="2" RowDefinitions="Auto,*" RowSpacing="16">
+                    <Border Classes="panel" Padding="20">
+                        <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="12">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="クイック追加"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <TextBox x:Name="TitleTextBox"
+                                         Text="{Binding NewTaskTitle, Mode=TwoWay}"
+                                         Watermark="タスク名"
+                                         Background="#FFFFFF"
+                                         BorderBrush="#DDE4F0"
+                                         CornerRadius="14"
+                                         Padding="14,12" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Spacing="8">
+                                <TextBlock Text="メモ"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <TextBox Text="{Binding NewTaskNote, Mode=TwoWay}"
+                                         Watermark="補足や次のアクション"
+                                         Background="#FFFFFF"
+                                         BorderBrush="#DDE4F0"
+                                         CornerRadius="14"
+                                         Padding="14,12" />
+                            </StackPanel>
+
+                            <Button Grid.Column="2"
+                                    VerticalAlignment="Bottom"
+                                    Padding="20,14"
+                                    Background="#7C95FF"
+                                    Foreground="White"
+                                    CornerRadius="16"
+                                    Click="AddTaskButton_OnClick">
+                                追加
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <Grid Grid.Row="1">
+                        <Border IsVisible="{Binding ShowEmptyState}"
+                                Classes="panel"
+                                Padding="32">
+                            <StackPanel Spacing="10"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                <TextBlock Text="このレーンにはまだタスクがありません"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Foreground="#111827" />
+                                <TextBlock Text="フィルタを切り替えるか、上のクイック追加から新しいタスクを登録してください。"
+                                           Classes="subtle"
+                                           TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           MaxWidth="320" />
+                            </StackPanel>
+                        </Border>
+
+                        <ScrollViewer IsVisible="{Binding HasVisibleTasks}"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding VisibleTasks}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:TodoItemViewModel">
+                                        <Border Classes="task-card"
+                                                Classes.completed="{Binding IsCompleted}"
+                                                Classes.important="{Binding IsImportant}"
+                                                Margin="0,0,0,14"
+                                                Opacity="{Binding CardOpacity}">
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                                                <CheckBox IsChecked="{Binding IsCompleted, Mode=TwoWay}"
+                                                          VerticalAlignment="Top"
+                                                          Margin="0,4,0,0" />
+
+                                                <StackPanel Grid.Column="1" Spacing="6">
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <Border Background="#F4F7FD"
+                                                                CornerRadius="12"
+                                                                Padding="10,6">
+                                                            <TextBlock Text="{Binding Section}"
+                                                                       Foreground="#49607F"
+                                                                       FontWeight="SemiBold" />
+                                                        </Border>
+                                                        <Border Background="#EAF1FF"
+                                                                CornerRadius="12"
+                                                                Padding="10,6">
+                                                            <TextBlock Text="{Binding StateLabel}"
+                                                                       Foreground="#4864D8"
+                                                                       FontWeight="SemiBold" />
+                                                        </Border>
+                                                    </StackPanel>
+
+                                                    <TextBlock Text="{Binding Title}"
+                                                               FontSize="18"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#111827"
+                                                               TextWrapping="Wrap" />
+
+                                                    <TextBlock IsVisible="{Binding HasNote}"
+                                                               Text="{Binding Note}"
+                                                               Classes="subtle"
+                                                               TextWrapping="Wrap" />
+                                                </StackPanel>
+
+                                                <Button Grid.Column="2"
+                                                        VerticalAlignment="Top"
+                                                        Padding="14,10"
+                                                        CornerRadius="14"
+                                                        Background="#F5F7FD"
+                                                        Foreground="#1F2937"
+                                                        Click="ToggleImportantButton_OnClick">
+                                                    <TextBlock Text="{Binding ImportanceLabel}" />
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="2" RowDefinitions="Auto,Auto,*" RowSpacing="18">
+                <Border Classes="panel" Padding="20">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="フォーカス"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827" />
+
+                        <Border IsVisible="{Binding HasFocusTask}"
+                                Background="#F6F8FD"
+                                CornerRadius="22"
+                                Padding="18">
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="{Binding FocusHeading}"
+                                           Foreground="#7A8497" />
+                                <TextBlock Text="{Binding FocusTaskTitle}"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"
+                                           TextWrapping="Wrap"
+                                           Foreground="#111827" />
+                                <TextBlock Text="{Binding FocusTaskNote}"
+                                           Classes="subtle"
+                                           TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Border Background="#EAF1FF"
+                                            CornerRadius="12"
+                                            Padding="10,6">
+                                        <TextBlock Text="{Binding FocusTaskSection}"
+                                                   Foreground="#4864D8" />
+                                    </Border>
+                                    <Border Background="#FFFFFF"
+                                            CornerRadius="12"
+                                            BorderBrush="#E2E8F0"
+                                            BorderThickness="1"
+                                            Padding="10,6">
+                                        <TextBlock Text="{Binding FocusTaskDueLabel}"
+                                                   Foreground="#6B7280" />
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border IsVisible="{Binding ShowFocusEmptyState}"
+                                Background="#F6F8FD"
+                                CornerRadius="22"
+                                Padding="18">
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="いまはタスクなし"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <TextBlock Text="次のアイデアが浮かんだら、クイック追加から記録できます。"
+                                           Classes="subtle"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="1" Classes="panel" Padding="20">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="デザインの方向"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827" />
+                        <TextBlock Text="明るいトーンのパネル、やわらかい影、余白多めのレイアウトで、macOS アプリの落ち着いた雰囲気を意識しています。"
+                                   Classes="subtle"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2" Classes="panel" Padding="20">
+                    <StackPanel Spacing="14">
+                        <TextBlock Text="使い方"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111827" />
+
+                        <Border Background="#F6F8FD" CornerRadius="18" Padding="16">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="すばやく追加"
+                                           FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <TextBlock Text="上の入力欄から、いま見ているビューを保ったまま新しいタスクを登録できます。"
+                                           Classes="subtle"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F6F8FD" CornerRadius="18" Padding="16">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="固定で目立たせる"
+                                           FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <TextBlock Text="固定ボタンを押すと、優先レーンとフォーカス欄に反映されます。"
+                                           Classes="subtle"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F6F8FD" CornerRadius="18" Padding="16">
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="完了を残す"
+                                           FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <TextBlock Text="完了したタスクは一覧から整理されつつ、完了ビューからあとで見返せます。"
+                                           Classes="subtle"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
