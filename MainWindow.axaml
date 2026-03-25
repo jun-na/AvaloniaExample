@@ -7,6 +7,7 @@
         x:Class="AvaloniaExample.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Luna Tasks"
+        Icon="avares://AvaloniaExample/Assets/AppIcon.png"
         Width="1280"
         Height="820"
         MinWidth="1080"

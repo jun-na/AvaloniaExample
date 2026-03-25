@@ -64,6 +64,12 @@ mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 cp "$PUBLISHED_BINARY" "$APP_BINARY"
 chmod +x "$APP_BINARY"
 
+# Copy app icon if it exists
+ICON_SRC="$ROOT_DIR/assets/AppIcon.icns"
+if [[ -f "$ICON_SRC" ]]; then
+    cp "$ICON_SRC" "$RESOURCES_DIR/AppIcon.icns"
+fi
+
 cat > "$PLIST_FILE" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -89,6 +95,8 @@ cat > "$PLIST_FILE" <<EOF
     <string>$VERSION</string>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>NSHighResolutionCapable</key>
     <true/>
 </dict>
